@@ -1,0 +1,26 @@
+{
+  "name": "bike-tracker",
+  "version": "1.0.0",
+  "description": "Application for tracking bike activities",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doctorallen/bike-tracker.git"
+  },
+  "keywords": [
+    "biking"
+  ],
+  "author": "David Allen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doctorallen/bike-tracker/issues"
+  },
+  "homepage": "https://github.com/doctorallen/bike-tracker#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.26.0"
+  }
+}
