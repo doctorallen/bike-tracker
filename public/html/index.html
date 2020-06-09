@@ -45,7 +45,7 @@
               data-parent="#activity-form-accordian"
             >
               <div class="card-body">
-                <form>
+                <form id="activity-form">
                   <div class="form-group">
                     <label for="mileage">Mileage</label>
                     <input
@@ -109,6 +109,7 @@
       </section>
     </main>
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -124,6 +125,125 @@
       integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
       crossorigin="anonymous"
     ></script>
-    <script></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const loadGraphs = () => {
+        // TODO: load the graphs
+        console.log('graphs loaded');
+        loadDurationGraph();
+        loadMileageGraph();
+      };
+
+      const loadDurationGraph = () => {
+        axios.get('/api/graphs/duration').then((response) => {
+          const data = response.data;
+          console.log(data);
+          Highcharts.chart('duration-highchart', {
+            chart: {
+              zoomType: 'x',
+            },
+            title: {
+              text: 'Duration Over Time',
+            },
+            subtitle: {
+              text:
+                document.ontouchstart === undefined
+                  ? 'Click and drag in the plot area to zoom in'
+                  : 'Pinch the chart to zoom in',
+            },
+            xAxis: {
+              type: 'datetime',
+            },
+            yAxis: {
+              title: {
+                text: 'Time (in minutes)',
+              },
+            },
+            legend: {
+              enabled: false,
+            },
+            series: [
+              {
+                type: 'line',
+                name: 'Duration',
+                data: data,
+              },
+            ],
+          });
+        });
+      };
+
+      const loadMileageGraph = () => {
+        axios.get('/api/graphs/mileage').then((response) => {
+          const data = response.data;
+          console.log(data);
+          Highcharts.chart('mileage-highchart', {
+            chart: {
+              zoomType: 'x',
+            },
+            title: {
+              text: 'Mileage Over Time',
+            },
+            subtitle: {
+              text:
+                document.ontouchstart === undefined
+                  ? 'Click and drag in the plot area to zoom in'
+                  : 'Pinch the chart to zoom in',
+            },
+            xAxis: {
+              type: 'datetime',
+            },
+            yAxis: {
+              title: {
+                text: 'Miles',
+              },
+            },
+            legend: {
+              enabled: false,
+            },
+            series: [
+              {
+                type: 'line',
+                name: 'Mileage',
+                data: data,
+              },
+            ],
+          });
+        });
+      };
+
+      // when our page loads, load the graphs initially
+      $(document).ready(() => {
+        loadGraphs();
+      });
+
+      // on submit event for the form
+      $('#activity-form').on('submit', (event) => {
+        event.preventDefault();
+        // - create an activity object
+        const newActivity = {
+          mileage: $('#mileage').val(),
+          duration: $('#duration').val(),
+          date: $('#date').val(),
+        };
+
+        // - POST activity data to API @ /api/activities
+        axios
+          .post('/api/activities', newActivity)
+          .then((response) => {
+            // - when response, display message to user that the activity was tracked
+            alert('Activity tracked successfully!');
+            $('#mileage').val('');
+            $('#duration').val('');
+            $('#date').val('');
+
+            loadGraphs();
+          })
+          .catch((err) => {
+            const message = err.response.data.message;
+            alert(message);
+          });
+      });
+    </script>
   </body>
 </html>
