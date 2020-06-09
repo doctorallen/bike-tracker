@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const moment = require('moment');
+const { formatDataForGraph } = require('../utils/dataFormatter');
 const ActivityRepository = require('../utils/ActivityRepository');
 
 const ActivityRepo = new ActivityRepository();
@@ -38,43 +38,19 @@ router.post('/activities', (req, res) => {
 
 // TODO: route for getting activity data by duration
 router.get('/graphs/duration', (req, res) => {
-  // format the data like so:
-  /*
-  [
-    [
-      timestamp,
-      data
-    ]
-  ]
-  */
-  let formattedData = ActivityRepo.getActivities().map((activity) => {
-    const timestamp = moment(activity.date).format('x');
-    return [parseInt(timestamp), parseInt(activity.duration)];
-  });
-  formattedData = formattedData.sort((a, b) => {
-    return a[0] - b[0];
-  });
+  const formattedData = formatDataForGraph(
+    ActivityRepo.getActivities(),
+    'duration'
+  );
   res.json(formattedData);
 });
 
 // TODO: route for getting activity data by mileage
 router.get('/graphs/mileage', (req, res) => {
-  // format the data like so:
-  /*
-  [
-    [
-      timestamp,
-      data
-    ]
-  ]
-  */
-  let formattedData = ActivityRepo.getActivities().map((activity) => {
-    const timestamp = moment(activity.date).format('x');
-    return [parseInt(timestamp), parseInt(activity.mileage)];
-  });
-  formattedData = formattedData.sort((a, b) => {
-    return a[0] - b[0];
-  });
+  const formattedData = formatDataForGraph(
+    ActivityRepo.getActivities(),
+    'mileage'
+  );
   res.json(formattedData);
 });
 
