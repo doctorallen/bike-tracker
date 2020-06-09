@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const moment = require('moment');
+const ActivityRepository = require('../utils/ActivityRepository');
 
-const activities = [];
+const ActivityRepo = new ActivityRepository();
 
 // TODO: route for saving activity data
 router.post('/activities', (req, res) => {
@@ -28,9 +29,9 @@ router.post('/activities', (req, res) => {
     });
   }
 
-  activities.push(req.body);
+  ActivityRepo.addActivity(req.body);
   res.json({
-    activities: activities,
+    activities: ActivityRepo.getActivities(),
     success: true,
   });
 });
@@ -46,7 +47,7 @@ router.get('/graphs/duration', (req, res) => {
     ]
   ]
   */
-  let formattedData = activities.map((activity) => {
+  let formattedData = ActivityRepo.getActivities().map((activity) => {
     const timestamp = moment(activity.date).format('x');
     return [parseInt(timestamp), parseInt(activity.duration)];
   });
@@ -67,7 +68,7 @@ router.get('/graphs/mileage', (req, res) => {
     ]
   ]
   */
-  let formattedData = activities.map((activity) => {
+  let formattedData = ActivityRepo.getActivities().map((activity) => {
     const timestamp = moment(activity.date).format('x');
     return [parseInt(timestamp), parseInt(activity.mileage)];
   });
