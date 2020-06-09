@@ -125,13 +125,20 @@
     ></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
+      // this function loads up both of our graphs when we call it
       const loadGraphs = () => {
-        // TODO: load the graphs
-        console.log('graphs loaded');
         loadDurationGraph();
         loadMileageGraph();
       };
 
+      // this function creates a highchart graph where:
+      // - the graph will be inserted into the "div" specified
+      // - the graph will have the "title" specified
+      // - the graph will have the "series" name specified (displays when you
+      // hover over the data point)
+      // - the graph will use the "data" specified
+      // for more details on everything defined in this object, look at Highcharts
+      // documentation here: https://www.highcharts.com/demo/line-time-series
       const highchartGraph = (div, title, series, data) => {
         Highcharts.chart(div, {
           chart: {
@@ -212,29 +219,44 @@
         });
       };
 
+      // our function that loads our duration graph
       const loadDurationGraph = () => {
-        axios.get('/api/graphs/duration').then((response) => {
-          const data = response.data;
-          highchartGraph(
-            'duration-highchart',
-            'Duration Over Time',
-            'Duration',
-            data
-          );
-        });
+        // first get the data from the API
+        axios
+          .get('/api/graphs/duration')
+          // once we get the data
+          .then((response) => {
+            const data = response.data;
+            // create a highchartGraph with our predefined values, put it in the
+            // right container with the correct title and series name, and pass
+            // the data we just got into it
+            highchartGraph(
+              'duration-highchart',
+              'Duration Over Time',
+              'Duration',
+              data
+            );
+          });
       };
 
+      // our function that loads our mileage graph
       const loadMileageGraph = () => {
-        axios.get('/api/graphs/mileage').then((response) => {
-          const data = response.data;
-          console.log(data);
-          highchartGraph(
-            'mileage-highchart',
-            'Mileage Over Time',
-            'Mileage',
-            data
-          );
-        });
+        // first get the data from the API
+        axios
+          .get('/api/graphs/mileage')
+          // once we get the data
+          .then((response) => {
+            const data = response.data;
+            // create a highchartGraph with our predefined values, put it in the
+            // right container with the correct title and series name, and pass
+            // the data we just got into it
+            highchartGraph(
+              'mileage-highchart',
+              'Mileage Over Time',
+              'Mileage',
+              data
+            );
+          });
       };
 
       // when our page loads, load the graphs initially
@@ -258,14 +280,20 @@
           .then((response) => {
             // - when response, display message to user that the activity was tracked
             alert('Activity tracked successfully!');
+
+            // reset our form so that we can easily add another activity
             $('#mileage').val('');
             $('#duration').val('');
             $('#date').val('');
 
             loadGraphs();
           })
+          // if there is an error saving to the API (this catch will be called when
+          // we send back our 400 error when something is invalid)
           .catch((err) => {
+            // get our message from the error that we sent back from our API
             const message = err.response.data.message;
+            // display the message to the user
             alert(message);
           });
       });
