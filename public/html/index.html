@@ -6,9 +6,7 @@
     <title>Bike Activity Tracker</title>
     <link
       rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-      crossorigin="anonymous"
+      href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/darkly/bootstrap.min.css"
     />
     <style></style>
   </head>
@@ -134,42 +132,95 @@
         loadMileageGraph();
       };
 
+      const highchartGraph = (div, title, series, data) => {
+        Highcharts.chart(div, {
+          chart: {
+            zoomType: 'x',
+            backgroundColor: {
+              linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+              stops: [
+                [0, '#2a2a2b'],
+                [1, '#3e3e40'],
+              ],
+            },
+            style: {
+              fontFamily: "'Unica One', sans-serif",
+            },
+            plotBorderColor: '#606063',
+          },
+          title: {
+            text: title,
+            style: {
+              color: '#E0E0E3',
+              textTransform: 'uppercase',
+              fontSize: '20px',
+            },
+          },
+          subtitle: {
+            text:
+              document.ontouchstart === undefined
+                ? 'Click and drag in the plot area to zoom in'
+                : 'Pinch the chart to zoom in',
+          },
+          xAxis: {
+            type: 'datetime',
+            gridLineColor: '#707073',
+            labels: {
+              style: {
+                color: '#E0E0E3',
+              },
+            },
+            lineColor: '#707073',
+            minorGridLineColor: '#505053',
+            tickColor: '#707073',
+            title: {
+              style: {
+                color: '#A0A0A3',
+              },
+            },
+          },
+          yAxis: {
+            title: {
+              text: 'Time (in minutes)',
+            },
+            gridLineColor: '#707073',
+            labels: {
+              style: {
+                color: '#E0E0E3',
+              },
+            },
+            lineColor: '#707073',
+            minorGridLineColor: '#505053',
+            tickColor: '#707073',
+            tickWidth: 1,
+            title: {
+              style: {
+                color: '#A0A0A3',
+              },
+            },
+          },
+          legend: {
+            enabled: false,
+          },
+          series: [
+            {
+              type: 'line',
+              name: series,
+              data: data,
+            },
+          ],
+        });
+      };
+
       const loadDurationGraph = () => {
         axios.get('/api/graphs/duration').then((response) => {
           const data = response.data;
-          console.log(data);
-          Highcharts.chart('duration-highchart', {
-            chart: {
-              zoomType: 'x',
-            },
-            title: {
-              text: 'Duration Over Time',
-            },
-            subtitle: {
-              text:
-                document.ontouchstart === undefined
-                  ? 'Click and drag in the plot area to zoom in'
-                  : 'Pinch the chart to zoom in',
-            },
-            xAxis: {
-              type: 'datetime',
-            },
-            yAxis: {
-              title: {
-                text: 'Time (in minutes)',
-              },
-            },
-            legend: {
-              enabled: false,
-            },
-            series: [
-              {
-                type: 'line',
-                name: 'Duration',
-                data: data,
-              },
-            ],
-          });
+          highchartGraph(
+            'duration-highchart',
+            'Duration Over Time',
+            'Duration',
+            data
+          );
         });
       };
 
@@ -177,38 +228,12 @@
         axios.get('/api/graphs/mileage').then((response) => {
           const data = response.data;
           console.log(data);
-          Highcharts.chart('mileage-highchart', {
-            chart: {
-              zoomType: 'x',
-            },
-            title: {
-              text: 'Mileage Over Time',
-            },
-            subtitle: {
-              text:
-                document.ontouchstart === undefined
-                  ? 'Click and drag in the plot area to zoom in'
-                  : 'Pinch the chart to zoom in',
-            },
-            xAxis: {
-              type: 'datetime',
-            },
-            yAxis: {
-              title: {
-                text: 'Miles',
-              },
-            },
-            legend: {
-              enabled: false,
-            },
-            series: [
-              {
-                type: 'line',
-                name: 'Mileage',
-                data: data,
-              },
-            ],
-          });
+          highchartGraph(
+            'mileage-highchart',
+            'Mileage Over Time',
+            'Mileage',
+            data
+          );
         });
       };
 
