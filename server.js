@@ -5,7 +5,7 @@ const express = require('express');
 const app = express();
 
 // define the port that our app will be listening on
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // required our API and HTML Routes
 const apiRoutes = require('./routes/apiRoutes');
